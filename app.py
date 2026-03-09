@@ -20,7 +20,7 @@ question = st.text_input(
 
 
 if st.button("Generate Explanation"):
-    if not artifact or not question or not api_key:
+    if not artifact or not question:
         st.warning("Please paste an artifact, enter a question, and provide your API key.")
     else:
         try:
