@@ -583,6 +583,7 @@ Provide a short explanation that someone new to the system can understand quickl
 Important instructions:
 - Do not invent external systems if they are not visible.
 - If dependencies cannot be determined, clearly state that.
+"""
 
             else:  # Onboarding Summary
                 mode_instruction = """
