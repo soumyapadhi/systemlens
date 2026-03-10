@@ -537,37 +537,52 @@ Explain what a TPM should do before and during release if this area changes.
 Return your response in exactly this structure:
 
 ### 1. Program Purpose
-Explain in simple business language what this COBOL program appears to do.
+Explain what business function this COBOL program performs.
 
-### 2. High-Level Logic Flow
-Break the program into step-by-step logical flow so that a non-COBOL person can understand it.
+### 2. Execution Context
+Based on the structure, indicate whether this program appears to be:
+- batch processing
+- report generation
+- transaction logic
+- data transformation
+If unclear, say so.
 
-### 3. Key Sections / Paragraphs
-List the important divisions, sections, or paragraphs and explain what role they likely play.
+### 3. High-Level Logic Flow
+Describe the program logic step by step in plain English.
 
-### 4. Inputs and Outputs
-Identify likely input files, output files, tables, copybooks, working storage areas, or records used by the program.
+### 4. Key Sections / Paragraphs
+Explain the role of important divisions, sections, and paragraphs.
 
-### 5. Business Rules / Decision Logic
-Highlight important IF conditions, validations, calculations, or branching logic that seem important.
+### 5. Inputs and Outputs
+Identify:
+- input files
+- output files
+- working storage fields
+- copybooks
+- tables or data sources (if visible)
 
-### 6. Dependencies and Impact
-Explain what upstream or downstream systems, jobs, files, or reports may depend on this program.
+### 6. Business Rules
+Highlight calculations, validations, and conditional logic.
 
-### 7. Risks If Modified
-Mention what could break if this program is changed without proper validation.
+### 7. System Dependencies
+Identify possible upstream or downstream dependencies such as:
+- batch jobs
+- reports
+- reconciliation processes
+- other programs
 
-### 8. Redesign / Modernization Suggestions
-Suggest how this logic could be restructured, modularized, documented, or modernized.
+### 8. Risks If Modified
+Explain what could break if this program is changed.
 
-### 9. Beginner-Friendly Summary
-Give a short plain-English summary that a new engineer or TPM can understand quickly.
+### 9. Modernization / Refactoring Suggestions
+Suggest ways the logic could be modularized, documented, or migrated to modern architectures.
+
+### 10. Quick Summary for New Engineers
+Provide a short explanation that someone new to the system can understand quickly.
 
 Important instructions:
-- If some COBOL elements are unclear, say so explicitly
-- Do not invent file names, jobs, or system dependencies that are not visible
-- If copybooks or external dependencies seem missing, mention that as a gap
-"""
+- Do not invent external systems if they are not visible.
+- If dependencies cannot be determined, clearly state that.
 
             else:  # Onboarding Summary
                 mode_instruction = """
