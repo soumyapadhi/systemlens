@@ -35,7 +35,7 @@ if st.button("Run Analysis"):
     else:
         try:
             if analysis_mode == "Explain Artifact":
-    mode_instruction = """
+              mode_instruction = """
 Return your response in exactly this structure:
 
 ### 1. System / Module Summary
