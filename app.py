@@ -15,6 +15,7 @@ st.set_page_config(
 # -----------------------------
 # Custom CSS
 # -----------------------------
+
 st.markdown(
     """
     <style>
@@ -107,17 +108,74 @@ st.markdown(
         border-top: 1px solid rgba(148,163,184,0.16);
     }
 
-    /* Inputs */
-    textarea, input {
+    /* Labels and general text */
+    label, p, span, div {
+        color: #e5e7eb;
+    }
+
+    /* Text inputs and text areas */
+    textarea,
+    textarea::placeholder,
+    input,
+    input::placeholder {
         background-color: #0f172a !important;
         color: #e5e7eb !important;
+        -webkit-text-fill-color: #e5e7eb !important;
         border-radius: 12px !important;
+    }
+
+    /* Streamlit text input + text area wrappers */
+    .stTextInput input,
+    .stTextArea textarea {
+        background-color: #0f172a !important;
+        color: #e5e7eb !important;
+        -webkit-text-fill-color: #e5e7eb !important;
+    }
+
+    /* Selectbox text */
+    .stSelectbox div[data-baseweb="select"] > div {
+        background-color: #0f172a !important;
+        color: #e5e7eb !important;
+    }
+
+    .stSelectbox div[data-baseweb="select"] span {
+        color: #e5e7eb !important;
+    }
+
+    /* File uploader container */
+    .stFileUploader {
+        background: rgba(15,23,42,0.72);
+        border-radius: 14px;
+        padding: 8px;
+    }
+
+    /* Browse files button */
+    .stFileUploader button {
+        background: linear-gradient(90deg, #0ea5e9, #6366f1) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+    }
+
+    .stFileUploader button:hover {
+        background: linear-gradient(90deg, #38bdf8, #818cf8) !important;
+        color: #ffffff !important;
+    }
+
+    /* Uploaded file name / helper text */
+    .stFileUploader small,
+    .stFileUploader span,
+    .stFileUploader div,
+    .stFileUploader label {
+        color: #e5e7eb !important;
+        opacity: 1 !important;
     }
 
     /* Buttons */
     .stButton > button {
         background: linear-gradient(90deg, #0ea5e9, #6366f1);
-        color: white;
+        color: white !important;
         border: none;
         border-radius: 12px;
         padding: 0.65rem 1.4rem;
@@ -127,19 +185,7 @@ st.markdown(
 
     .stButton > button:hover {
         background: linear-gradient(90deg, #38bdf8, #818cf8);
-        color: white;
-    }
-
-    /* File uploader */
-    .stFileUploader {
-        background: rgba(15,23,42,0.72);
-        border-radius: 14px;
-        padding: 8px;
-    }
-
-    /* Selectbox label */
-    label, .stMarkdown, p {
-        color: #e5e7eb !important;
+        color: white !important;
     }
     </style>
     """,
