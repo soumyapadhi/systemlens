@@ -3,12 +3,158 @@ from openai import OpenAI
 from pypdf import PdfReader
 from docx import Document
 
-st.set_page_config(page_title="AI System Copilot", page_icon="🤖", layout="centered")
+# -----------------------------
+# Page config
+# -----------------------------
+st.set_page_config(
+    page_title="AI System Copilot",
+    page_icon="🤖",
+    layout="wide"
+)
 
+# -----------------------------
+# Custom CSS
+# -----------------------------
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background: linear-gradient(180deg, #0b1220 0%, #111827 100%);
+        color: #e5e7eb;
+    }
+
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1100px;
+    }
+
+    h1, h2, h3 {
+        color: #f8fafc;
+    }
+
+    .hero-box {
+        background: linear-gradient(135deg, rgba(14,165,233,0.18), rgba(99,102,241,0.18));
+        border: 1px solid rgba(148,163,184,0.18);
+        padding: 28px;
+        border-radius: 20px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+        margin-bottom: 1.2rem;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        color: #cbd5e1;
+        line-height: 1.6;
+    }
+
+    .feature-card {
+        background: rgba(30,41,59,0.72);
+        border: 1px solid rgba(148,163,184,0.14);
+        border-radius: 18px;
+        padding: 18px;
+        min-height: 120px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .feature-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin-bottom: 0.4rem;
+    }
+
+    .feature-text {
+        font-size: 0.92rem;
+        color: #cbd5e1;
+        line-height: 1.5;
+    }
+
+    .section-card {
+        background: rgba(15,23,42,0.72);
+        border: 1px solid rgba(148,163,184,0.14);
+        border-radius: 20px;
+        padding: 22px;
+        margin-top: 1rem;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.22);
+    }
+
+    .output-card {
+        background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(30,41,59,0.92));
+        border: 1px solid rgba(56,189,248,0.18);
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+        margin-top: 1rem;
+    }
+
+    .small-note {
+        color: #94a3b8;
+        font-size: 0.86rem;
+        margin-top: 0.35rem;
+    }
+
+    .divider {
+        margin-top: 1.2rem;
+        margin-bottom: 1.2rem;
+        border-top: 1px solid rgba(148,163,184,0.16);
+    }
+
+    /* Inputs */
+    textarea, input {
+        background-color: #0f172a !important;
+        color: #e5e7eb !important;
+        border-radius: 12px !important;
+    }
+
+    /* Buttons */
+    .stButton > button {
+        background: linear-gradient(90deg, #0ea5e9, #6366f1);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.65rem 1.4rem;
+        font-weight: 700;
+        box-shadow: 0 8px 18px rgba(14,165,233,0.18);
+    }
+
+    .stButton > button:hover {
+        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        color: white;
+    }
+
+    /* File uploader */
+    .stFileUploader {
+        background: rgba(15,23,42,0.72);
+        border-radius: 14px;
+        padding: 8px;
+    }
+
+    /* Selectbox label */
+    label, .stMarkdown, p {
+        color: #e5e7eb !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# -----------------------------
+# OpenAI client
+# -----------------------------
 api_key = st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
-
+# -----------------------------
+# Helper functions
+# -----------------------------
 def extract_text_from_pdf(uploaded_file):
     reader = PdfReader(uploaded_file)
     text = ""
@@ -18,16 +164,13 @@ def extract_text_from_pdf(uploaded_file):
             text += page_text + "\n"
     return text
 
-
 def extract_text_from_docx(uploaded_file):
     doc = Document(uploaded_file)
     text = "\n".join([para.text for para in doc.paragraphs if para.text.strip()])
     return text
 
-
 def extract_text_from_txt(uploaded_file):
     return uploaded_file.read().decode("utf-8")
-
 
 def extract_artifact_text(uploaded_file):
     if uploaded_file is None:
@@ -44,12 +187,75 @@ def extract_artifact_text(uploaded_file):
     else:
         return ""
 
+# -----------------------------
+# Header / Hero section
+# -----------------------------
+st.markdown(
+    """
+    <div class="hero-box">
+        <div class="hero-title">🤖 AI Copilot for Enterprise Systems</div>
+        <div class="hero-subtitle">
+            Upload technical documents or paste architecture notes to quickly understand
+            system flows, dependencies, onboarding context, and potential release impact.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-st.title("AI Copilot for Enterprise System Understanding")
-st.write("Upload a technical document or paste an artifact below and analyze it in different ways.")
+# -----------------------------
+# Feature cards
+# -----------------------------
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown(
+        """
+        <div class="feature-card">
+            <div class="feature-title">⚙️ Explain Systems</div>
+            <div class="feature-text">
+                Turn dense technical artifacts into simple workflow explanations and module summaries.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+with col2:
+    st.markdown(
+        """
+        <div class="feature-card">
+            <div class="feature-title">🔗 Trace Dependencies</div>
+            <div class="feature-text">
+                Surface upstream and downstream dependencies to understand how systems connect.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+with col3:
+    st.markdown(
+        """
+        <div class="feature-card">
+            <div class="feature-title">🚨 Assess Change Impact</div>
+            <div class="feature-text">
+                Highlight release risks, affected workflows, and what a TPM or PM should watch closely.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+
+# -----------------------------
+# Input section
+# -----------------------------
+st.markdown('<div class="section-card">', unsafe_allow_html=True)
 
 analysis_mode = st.selectbox(
-    "Choose analysis mode",
+    "🔍 Choose analysis mode",
     [
         "Explain Artifact",
         "Dependency Analysis",
@@ -63,11 +269,15 @@ uploaded_file = st.file_uploader(
     type=["pdf", "docx", "txt"]
 )
 
-st.caption("Best results with text-based PDFs, DOCX files, and structured technical documents.")
+st.markdown(
+    '<div class="small-note">Best results with text-based PDFs, DOCX files, and structured technical documents.</div>',
+    unsafe_allow_html=True
+)
 
 artifact = st.text_area(
     "Or paste code, architecture notes, API documentation, or process notes",
-    height=250
+    height=260,
+    placeholder="Paste a workflow, architecture note, service interaction, requirement document excerpt, or process description here..."
 )
 
 question = st.text_input(
@@ -75,7 +285,14 @@ question = st.text_input(
     placeholder="Example: Give me a beginner-friendly summary of this flow"
 )
 
-if st.button("Run Analysis"):
+run_clicked = st.button("Run Analysis")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# -----------------------------
+# AI logic
+# -----------------------------
+if run_clicked:
     extracted_text = extract_artifact_text(uploaded_file) if uploaded_file else ""
     final_artifact = extracted_text if extracted_text.strip() else artifact
 
@@ -231,8 +448,10 @@ User question:
 
                 answer = response.choices[0].message.content
 
+            st.markdown('<div class="output-card">', unsafe_allow_html=True)
             st.subheader(f"AI Output — {analysis_mode}")
             st.markdown(answer)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"Something went wrong: {e}")
