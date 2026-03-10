@@ -103,15 +103,6 @@ st.markdown(
         box-shadow: 0 8px 28px rgba(0,0,0,0.22);
     }
 
-    .output-card {
-        background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(30,41,59,0.92));
-        border: 1px solid rgba(56,189,248,0.18);
-        padding: 24px;
-        border-radius: 20px;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.28);
-        margin-top: 1rem;
-    }
-
     .small-note {
         color: #94a3b8;
         font-size: 0.86rem;
@@ -549,10 +540,8 @@ User question:
 
                 answer = response.choices[0].message.content
 
-            st.markdown('<div class="output-card">', unsafe_allow_html=True)
-            st.subheader(f"AI Output — {analysis_mode}")
-            st.markdown(answer)
-            st.markdown('</div>', unsafe_allow_html=True)
+                st.subheader(f"AI Output — {analysis_mode}")
+                st.markdown(answer)
 
         except Exception as e:
             st.error(f"Something went wrong: {e}")
