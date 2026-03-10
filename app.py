@@ -109,8 +109,17 @@ st.markdown(
     }
 
     /* Labels and general text */
-    label, p, span, div {
-        color: #e5e7eb;
+    label, p {
+    color: #e5e7eb;
+    }
+
+   /* uploader placeholder text */
+   [data-testid="stFileUploader"] small {
+     color: #e5e7eb !important;
+    }
+
+   [data-testid="stFileUploader"] span {
+     color: #e5e7eb !important;
     }
 
     /* Text inputs and text areas */
