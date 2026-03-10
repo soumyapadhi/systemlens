@@ -1,13 +1,52 @@
 import streamlit as st
 from openai import OpenAI
+from pypdf import PdfReader
+from docx import Document
 
 st.set_page_config(page_title="AI System Copilot", page_icon="🤖", layout="centered")
 
 api_key = st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
+
+def extract_text_from_pdf(uploaded_file):
+    reader = PdfReader(uploaded_file)
+    text = ""
+    for page in reader.pages:
+        page_text = page.extract_text()
+        if page_text:
+            text += page_text + "\n"
+    return text
+
+
+def extract_text_from_docx(uploaded_file):
+    doc = Document(uploaded_file)
+    text = "\n".join([para.text for para in doc.paragraphs if para.text.strip()])
+    return text
+
+
+def extract_text_from_txt(uploaded_file):
+    return uploaded_file.read().decode("utf-8")
+
+
+def extract_artifact_text(uploaded_file):
+    if uploaded_file is None:
+        return ""
+
+    file_name = uploaded_file.name.lower()
+
+    if file_name.endswith(".pdf"):
+        return extract_text_from_pdf(uploaded_file)
+    elif file_name.endswith(".docx"):
+        return extract_text_from_docx(uploaded_file)
+    elif file_name.endswith(".txt"):
+        return extract_text_from_txt(uploaded_file)
+    else:
+        return ""
+
+
 st.title("AI Copilot for Enterprise System Understanding")
-st.write("Paste a technical artifact below and analyze it in different ways.")
+st.write("Upload a technical document or paste an artifact below and analyze it in different ways.")
 
 analysis_mode = st.selectbox(
     "Choose analysis mode",
@@ -19,23 +58,33 @@ analysis_mode = st.selectbox(
     ]
 )
 
+uploaded_file = st.file_uploader(
+    "Upload a PDF, Word document, or text file",
+    type=["pdf", "docx", "txt"]
+)
+
+st.caption("Best results with text-based PDFs, DOCX files, and structured technical documents.")
+
 artifact = st.text_area(
-    "Paste code, architecture notes, API documentation, or process notes",
+    "Or paste code, architecture notes, API documentation, or process notes",
     height=250
 )
 
 question = st.text_input(
     "Ask a question",
-    placeholder="Example: Explain what this module does in simple terms"
+    placeholder="Example: Give me a beginner-friendly summary of this flow"
 )
 
 if st.button("Run Analysis"):
-    if not artifact or not question:
-        st.warning("Please paste an artifact and enter a question.")
+    extracted_text = extract_artifact_text(uploaded_file) if uploaded_file else ""
+    final_artifact = extracted_text if extracted_text.strip() else artifact
+
+    if not final_artifact or not question:
+        st.warning("Please upload a file or paste an artifact, and enter a question.")
     else:
         try:
             if analysis_mode == "Explain Artifact":
-              mode_instruction = """
+                mode_instruction = """
 Return your response in exactly this structure:
 
 ### 1. System / Module Summary
@@ -89,6 +138,9 @@ Mention any dependency-related risks or tight coupling visible from the artifact
 
 ### 5. Gaps / Unclear Areas
 Mention what dependency information is missing or needs confirmation.
+
+### 6. Program / Product Insight
+Explain what a PM or TPM should watch from a dependency and coordination standpoint.
 """
 
             elif analysis_mode == "Change Impact Analysis":
@@ -109,9 +161,12 @@ Suggest what should be validated before release.
 
 ### 5. Gaps / Unclear Areas
 Mention what is missing and what needs deeper engineering review.
+
+### 6. Program / Product Insight
+Explain what a TPM should do before and during release if this area changes.
 """
 
-            else:
+            else:  # Onboarding Summary
                 mode_instruction = """
 Return your response in exactly this structure:
 
@@ -124,11 +179,17 @@ List the main modules, systems, or actors a new joiner should focus on first.
 ### 3. End-to-End Workflow
 Explain the flow step by step as if explaining to someone new to the system.
 
-### 4. What Could Be Confusing
+### 4. Simple Flow Diagram
+Represent the workflow as a simple arrow diagram.
+
+### 5. What Could Be Confusing
 Call out areas that may confuse a new engineer or PM.
 
-### 5. Suggested Next Questions
+### 6. Suggested Next Questions
 List 3-5 follow-up questions a new joiner should ask to understand the system better.
+
+### 7. Program / Product Insight
+Explain what a PM or TPM should understand about this system beyond the technical flow.
 """
 
             prompt = f"""
@@ -147,7 +208,7 @@ Analysis mode:
 {analysis_mode}
 
 Technical artifact:
-{artifact}
+{final_artifact}
 
 User question:
 {question}
@@ -161,7 +222,7 @@ User question:
                     messages=[
                         {
                             "role": "system",
-                            "content": "You are a senior enterprise systems analyst. You explain technical artifacts clearly, practically, and in a structured format for new engineers, product managers, and program managers."
+                            "content": "You are a senior enterprise systems analyst. You explain technical artifacts clearly, practically, and in a structured format for new engineers, product managers, and technical program managers."
                         },
                         {"role": "user", "content": prompt}
                     ],
