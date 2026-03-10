@@ -2,6 +2,7 @@ import streamlit as st
 from openai import OpenAI
 
 st.set_page_config(page_title="AI System Copilot", page_icon="🤖", layout="centered")
+
 api_key = st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
@@ -18,13 +19,11 @@ question = st.text_input(
     placeholder="Example: Explain what this module does in simple terms"
 )
 
-
 if st.button("Generate Explanation"):
     if not artifact or not question:
-        st.warning("Please paste an artifact, enter a question, and provide your API key.")
+        st.warning("Please paste an artifact and enter a question.")
     else:
         try:
-            client = OpenAI(api_key=api_key)
             prompt = f"""
 You are an enterprise systems analyst helping a new engineer understand a complex enterprise system.
 
@@ -61,23 +60,23 @@ Explain what downstream impact or risks may happen if this module or workflow ch
 Mention what is missing, ambiguous, or would need validation from an engineer or documentation.
 """
 
-    with st.spinner("Analyzing artifact..."):
-        response = client.chat.completions.create(
-            model="gpt-4.1-mini",
-            messages=[
-            {
-                "role": "system",
-                "content": "You are a senior enterprise systems analyst. You explain technical artifacts clearly, practically, and in a structured format for new engineers, product managers, and program managers."
-            },
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.2
-    )
+            with st.spinner("Analyzing artifact..."):
+                response = client.chat.completions.create(
+                    model="gpt-4.1-mini",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are a senior enterprise systems analyst. You explain technical artifacts clearly, practically, and in a structured format for new engineers, product managers, and program managers."
+                        },
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.2
+                )
 
-    answer = response.choices[0].message.content
+                answer = response.choices[0].message.content
 
-st.subheader("AI Explanation")
-st.markdown(answer)
+            st.subheader("AI Explanation")
+            st.markdown(answer)
 
         except Exception as e:
             st.error(f"Something went wrong: {e}")
