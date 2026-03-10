@@ -255,7 +255,6 @@ st.markdown(
         border-radius: 12px !important;
     }
 
-</style>
     </style>
     """,
     unsafe_allow_html=True
