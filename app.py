@@ -234,6 +234,28 @@ st.markdown(
         background: linear-gradient(90deg, #38bdf8, #818cf8);
         color: white !important;
     }
+    
+    /* File uploader button hover */
+    .stFileUploader button:hover {
+        background: linear-gradient(90deg, #38bdf8, #818cf8) !important;
+        color: #ffffff !important;
+    }
+    
+    /* Fix dropdown arrow visibility */
+    .stSelectbox svg {
+        fill: #e5e7eb !important;
+    }
+    
+    .stSelectbox div[data-baseweb="select"] span {
+        color: #e5e7eb !important;
+    }
+    
+    .stSelectbox div[data-baseweb="select"] > div {
+        background-color: #0f172a !important;
+        border-radius: 12px !important;
+    }
+
+</style>
     </style>
     """,
     unsafe_allow_html=True
